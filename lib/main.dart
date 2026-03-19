@@ -41,7 +41,8 @@ class _TodoAppState extends State<TodoApp> {
                 todo.title = controller.text;
                 await DatabaseHelper.instance.update(todo);
               }
-              if (mounted) Navigator.pop(ctx);
+              if (!mounted) return; // เช็คว่า Widget ยังอยู่ไหม
+Navigator.pop(context); // ใช้ context ของ State แทน ctx ของ Dialog
               _refresh();
             },
             child: const Text('บันทึก'),
