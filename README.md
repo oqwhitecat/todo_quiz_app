@@ -1,16 +1,9 @@
 # todo_quiz_app
 
-A new Flutter project.
-
-## Getting Started
-
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-# todo_quiz_app
-
 โครงการนี้เป็นส่วนหนึ่งของวิชาการพัฒนาแอปพลิเคชันบนอุปกรณ์เคลื่อนที่ (Mobile Native Subject) โดยมีวัตถุประสงค์เพื่อพัฒนาแอปพลิเคชันประเภท To-Do List สำหรับการจัดการกิจกรรมต่าง ๆ โดยใช้ Flutter Framework
+
+## 📸 Preview
+<img src="images/app-screenshot.png" width="500">
 
 ## 🛠 Features (ฟีเจอร์ของแอป)
 *   **Create Task:** สามารถเพิ่มรายการสิ่งที่ต้องทำได้
@@ -18,10 +11,15 @@ A few resources to get you started if this is your first Flutter project:
 *   **Responsive UI:** ออกแบบหน้าจอให้รองรับการใช้งานบนอุปกรณ์ต่างๆ
 
 ## 🚀 Getting Started (วิธีการรันโปรเจกต์)
-สำหรับผู้ที่ต้องการตรวจสอบโค้ด สามารถรันผ่าน Flutter SDK ได้ดังนี้:
+สำหรับผู้ที่ต้องการตรวจสอบโค้ด สามารถรันผ่าน Flutter SDK ได้ตามขั้นตอนดังนี้:
 
 1. **Clone project:**
    ```bash
    git clone https://github.com/oqwhitecat/todo_quiz_app.git
    cd todo_quiz_app
-<img src="images/app-screenshot.png" width="500">
+
+2. **Install dependencies:**
+   flutter pub get
+
+3. **Run application:**
+   flutter run
