@@ -1,70 +1,51 @@
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
+import 'package:flutter/foundation.dart' show kIsWeb; // เพิ่มบรรทัดนี้
 
 class Todo {
-  int? id;
-  String title;
-  int isDone;
-
+  int? id; String title; int isDone;
   Todo({this.id, required this.title, this.isDone = 0});
-
-  Map<String, dynamic> toMap() {
-    return {'id': id, 'title': title, 'isDone': isDone};
-  }
+  Map<String, dynamic> toMap() => {'id': id, 'title': title, 'isDone': isDone};
 }
 
 class DatabaseHelper {
   static final DatabaseHelper instance = DatabaseHelper._init();
   static Database? _database;
   DatabaseHelper._init();
+  
+  // สร้าง List ไว้กั๊กงานกรณีรันบนเว็บ (เพราะบนเว็บใช้ SQLite ไม่ได้)
+  List<Todo> _webTodos = []; 
 
-  Future<Database> get database async {
+  Future<Database?> get database async {
+    if (kIsWeb) return null; // ถ้าเป็นเว็บ ไม่ต้องเปิด DB
     if (_database != null) return _database!;
-    _database = await _initDB('quiz_db.db');
+    _database = await _initDB('quiz.db');
     return _database!;
   }
 
   Future<Database> _initDB(String filePath) async {
-    final dbPath = await getDatabasesPath();
-    final path = join(dbPath, filePath);
-    return await openDatabase(
-      path,
-      version: 1,
-      onCreate: (db, version) async {
-        await db.execute('CREATE TABLE todos(id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT, isDone INTEGER)');
-      },
-    );
+    return await openDatabase(join(await getDatabasesPath(), filePath), version: 1, 
+      onCreate: (db, v) => db.execute('CREATE TABLE todos(id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT, isDone INTEGER)'));
   }
 
-  Future<int> insert(Todo todo) async {
-    final db = await instance.database;
-    return await db.insert('todos', todo.toMap());
+  Future<int> insert(Todo t) async {
+    if (kIsWeb) { _webTodos.add(t); return 1; }
+    return await (await database)!.insert('todos', t.toMap());
   }
 
   Future<List<Todo>> getAll() async {
-    final db = await instance.database;
-    final maps = await db.query('todos', orderBy: 'id DESC');
-    return List.generate(maps.length, (i) {
-      return Todo(
-        id: maps[i]['id'] as int,
-        title: maps[i]['title'] as String,
-        isDone: maps[i]['isDone'] as int,
-      );
-    });
+    if (kIsWeb) return _webTodos;
+    final res = await (await database)!.query('todos', orderBy: 'id DESC');
+    return res.map((m) => Todo(id: m['id'] as int, title: m['title'] as String, isDone: m['isDone'] as int)).toList();
   }
 
-  Future<int> update(Todo todo) async {
-    final db = await instance.database;
-    return await db.update(
-      'todos',
-      todo.toMap(),
-      where: 'id = ?',
-      whereArgs: [todo.id],
-    );
+  Future<int> update(Todo t) async {
+    if (kIsWeb) return 1;
+    return await (await database)!.update(t.toMap(), where: 'id = ?', whereArgs: [t.id]);
   }
 
   Future<int> delete(int id) async {
-    final db = await instance.database;
-    return await db.delete('todos', where: 'id = ?', whereArgs: [id]);
+    if (kIsWeb) { _webTodos.removeWhere((t) => t.id == id); return 1; }
+    return await (await database)!.delete('todos', where: 'id = ?', whereArgs: [id]);
   }
 }
