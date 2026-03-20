@@ -1,6 +1,6 @@
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
-import 'package:flutter/foundation.dart' show kIsWeb; // เพิ่มบรรทัดนี้
+import 'package:flutter/foundation.dart' show kIsWeb;
 
 class Todo {
   int? id; String title; int isDone;
@@ -12,40 +12,36 @@ class DatabaseHelper {
   static final DatabaseHelper instance = DatabaseHelper._init();
   static Database? _database;
   DatabaseHelper._init();
-  
-  // สร้าง List ไว้กั๊กงานกรณีรันบนเว็บ (เพราะบนเว็บใช้ SQLite ไม่ได้)
-  List<Todo> _webTodos = []; 
+  List<Todo> _webStorage = []; 
 
   Future<Database?> get database async {
-    if (kIsWeb) return null; // ถ้าเป็นเว็บ ไม่ต้องเปิด DB
+    if (kIsWeb) return null;
     if (_database != null) return _database!;
-    _database = await _initDB('quiz.db');
-    return _database!;
-  }
-
-  Future<Database> _initDB(String filePath) async {
-    return await openDatabase(join(await getDatabasesPath(), filePath), version: 1, 
+    _database = await openDatabase(join(await getDatabasesPath(), 'q.db'), version: 1, 
       onCreate: (db, v) => db.execute('CREATE TABLE todos(id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT, isDone INTEGER)'));
+    return _database;
   }
 
   Future<int> insert(Todo t) async {
-    if (kIsWeb) { _webTodos.add(t); return 1; }
+    if (kIsWeb) { _webStorage.add(t); return 1; }
     return await (await database)!.insert('todos', t.toMap());
   }
 
   Future<List<Todo>> getAll() async {
-    if (kIsWeb) return _webTodos;
+    if (kIsWeb) return _webStorage;
     final res = await (await database)!.query('todos', orderBy: 'id DESC');
     return res.map((m) => Todo(id: m['id'] as int, title: m['title'] as String, isDone: m['isDone'] as int)).toList();
   }
 
   Future<int> update(Todo t) async {
     if (kIsWeb) return 1;
-    return await (await database)!.update(t.toMap(), where: 'id = ?', whereArgs: [t.id]);
+    // แก้ไขจุดนี้: ใส่ชื่อตาราง 'todos' นำหน้า
+    return await (await database)!.update('todos', t.toMap(), where: 'id = ?', whereArgs: [t.id]);
   }
 
   Future<int> delete(int id) async {
-    if (kIsWeb) { _webTodos.removeWhere((t) => t.id == id); return 1; }
+    if (kIsWeb) { _webStorage.removeWhere((t) => t.id == id); return 1; }
+    // แก้ไขจุดนี้: ตรวจสอบชื่อตารางให้ถูกต้อง
     return await (await database)!.delete('todos', where: 'id = ?', whereArgs: [id]);
   }
 }
