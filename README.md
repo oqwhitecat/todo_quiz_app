@@ -6,7 +6,7 @@
 <img src="images/app-screenshot.png" width="500">
 
 ## 📸 Preview ผมทำด้วยตนเอง ลองถูกผิดพึ่งตนเองสุดความสามารถเเล้วครับ เเต่deployเว็ปไม่ขึ้นครับ
-<img src="images/Before Run -หลังจากรันผลลัพธ์ .png" width="500">
+<img src="images/Before Run -หลังจากรันผลลัพธ์.png" width="500">
 
 ## 🛠 Features (ฟีเจอร์ของแอป)
 *   **Create Task:** สามารถเพิ่มรายการสิ่งที่ต้องทำได้
