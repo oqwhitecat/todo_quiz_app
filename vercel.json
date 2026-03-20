@@ -1,7 +1,4 @@
 {
-  "cleanUrls": true,
-  "outputDirectory": "build/web",
-  "rewrites": [
-    { "source": "/(.*)", "destination": "/index.html" }
-  ]
+  "rewrites": [{ "source": "/(.*)", "destination": "/" }],
+  "outputDirectory": "build/web"
 }

@@ -14,7 +14,7 @@ class DatabaseHelper {
   DatabaseHelper._init();
   
   // สร้างตัวแปรเก็บข้อมูลชั่วคราวสำหรับรันบน Web (เพื่อไม่ให้แอปค้าง)
-  List<Todo> _webStorage = [];
+  final List<Todo> _webStorage = [];
 
   Future<Database?> get database async {
     if (kIsWeb) return null; // ถ้าเป็น Web ไม่ต้องเปิด SQLite
